@@ -1,10 +1,11 @@
 import React from 'react'
 import { ChevronDown, Star } from 'lucide-react';
-import { SiReact, SiNextdotjs, SiTailwindcss, SiNodedotjs, SiMongodb } from 'react-icons/si'
+import { SiReact, SiNextdotjs, SiTailwindcss, SiNodedotjs, SiMongodb, SiHtml5,SiJavascript,SiBootstrap } from 'react-icons/si'
 import { PERSONAL_INFO, STATS } from '../../utils/constants';
 import { scrollToSection } from '../../hooks/useScrollSpy';
 import FadeIn from '../animations/FadeIn';
-import RadialGradientBackground from '../backgrounds/RadialGradientBackground'
+import RadialGradientBackground from '../backgrounds/RadialGradientBackground';
+import developerImage from '../../../../public/images/developer-portrait.png'
 function Hero() {
   return (
     <section className='relative min-h-screen flex items-center overflow-hidden bg-black'>
@@ -23,8 +24,10 @@ function Hero() {
               </div>
             </FadeIn>
             <FadeIn delay={100}>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-normal text-white mb-6 leading-tight">
-                React.js Developer Portfolio
+              {/* lg:text-6xl */}
+              <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-normal text-white mb-6 leading-tight">
+                {/* React.js Developer Portfolio */}
+                Frontend Developer Portfolio
               </h1>
             </FadeIn>
             <FadeIn delay={200}>
@@ -43,7 +46,7 @@ function Hero() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-10 max-w-full">
                 {STATS.map((stat, index) => {
                   return (
-                    <div key={index} className='text-left border-r boder-white/50 pr-10 last:border-r-0'>
+                    <div key={index} className='text-left border-r boder-white/50 pr-10 md:last:border-r-0'>
                       <div className='text-2xl font-normal text-primary mb-[8px] font-mono'>
                         {stat.value}
                       </div>
@@ -65,23 +68,28 @@ function Hero() {
                 </div>
                 {/* Image Container */}
                 <div className="relative rounded-2xl overflow-hidden m-[1px] h-[calc(100%-2px)]">
-                  <img src="../../public/images/developer-portrait.png" alt="Developer at Work" className='w-full h-full object-cover'/>
+                  {/* <img src="../../public/images/developer-portrait.png" alt="Developer at Work" className='w-full h-full object-cover'/> */}
+                   <img src={developerImage} alt="Developer at Work" className='w-full h-full object-cover'/>
                 </div>
                 {/* Technology Logos */}
                 <div className='absolute bottom-6 left-6 z-20'>
                   <FadeIn delay={500}>
                     <div className="flex items-center gap-4 bg-black/40 backdrop-blur-sm border border-white/10 rounded-full px-6 py-6">
                       <div className='w-6 h-6 flex items-center justify-center hover:scale-110 transition-transform duration-300'>
+                        {/* <SiReact className='w-full h-full text-primary'/> */}
+                        <SiHtml5 className='w-full h-full text-primary'/>
+                      </div>
+                      <div className="w-6 h-6 flex items-center justify-center hover:scale-110 transition-transform duration-300">
+                        {/* <SiNextdotjs className='w-full h-full text-primary' /> */}
+                        <SiJavascript className='w-full h-full text-primary'/>
+                      </div>
+                      <div className="w-6 h-6 flex items-center justify-center hover:scale-110 transition-transform duration-300">
+                        {/* <SiTailwindcss className='w-full h-full text-primary'/> */}
                         <SiReact className='w-full h-full text-primary'/>
                       </div>
-                      <div className="w-6 h-6 flex items-center justify-center hover:scale-110 transition-transform duration-300">
-                        <SiNextdotjs className='w-full h-full text-primary' />
-                      </div>
-                      <div className="w-6 h-6 flex items-center justify-center hover:scale-110 transition-transform duration-300">
-                        <SiTailwindcss className='w-full h-full text-primary'/>
-                      </div>
                       <div className='w-6 h-6 flex items-center justify-center hover:scale-110 transition-transform duration-300'>
-                        <SiMongodb className='w-full h-full text-primary'/>
+                        {/* <SiMongodb className='w-full h-full text-primary'/> */}
+                        <SiTailwindcss className='w-full h-full text-primary'/>
                       </div>
                     </div>
                   </FadeIn>

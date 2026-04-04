@@ -13,7 +13,7 @@ export const useScrollSpy = (sectionIds, offset = 100) => {
                     const sectionTop = section.offsetTop;
                     const sectionHeight = section.offsetHeight;
 
-                    if (scrollPosition >= sectionTop && scrollPosition < sectionHeight) {
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
                         setActiveSection(sectionIds[i]);
                         break;
                     }
@@ -33,7 +33,7 @@ export const useScrollSpy = (sectionIds, offset = 100) => {
 //Smooth scroll to a section
 export const scrollToSection = (sectionId, offset = 80) => {
     const section = document.getElementById(sectionId);
-    if(sectionId){
+    if(section){
         const top = section.offsetTop - offset;
         window.scrollTo({
             top,
