@@ -16,9 +16,9 @@ debugging, and delivering clean, maintainable code. `
 
 export const SOCIAL_LINKS = {
     github: 'https://github.com/SinghAkash02/',
-    linkedin: 'https://linkedin.com',
+    linkedin: 'https://www.linkedin.com/in/akash-singh-956a971b6?utm_source=share_via&utm_content=profile&utm_medium=member_android',
     twitter: 'https://twitter.com',
-    dribble: 'https://dribble.com',
+    dribble: 'https://dribbble.com/AkashSingh21',
 }
 
 export const STATS = [

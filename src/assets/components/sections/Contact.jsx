@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Mail, MapPin, Github, Linkedin, Twitter, Send, MessageSquare } from 'lucide-react'
 import { PERSONAL_INFO, SOCIAL_LINKS } from '../../utils/constants'
 import FadeIn from '../animations/FadeIn'
+import emailjs from '@emailjs/browser';
 function Contact() {
     const [formData, setFormData] = useState({
         name: '',
@@ -9,31 +10,83 @@ function Contact() {
         message: ''
     })
     const [status, setStatus] = useState({ type: '', message: '' });
+    const [loading, setLoading] = useState(false);
     const handleChange = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         })
     };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        if(!formData.name || !formData.email || !formData.message){
-            setStatus({type:'error', message:'Please fill in all fields'});
+        setStatus({ type: '', message: '' });
+
+        const name = formData.name.trim();
+        const email = formData.email.trim();
+        const message = formData.message.trim();
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+
+        if (!name || !email || !message) {
+            setStatus({
+                type: 'error',
+                message: 'Please fill in all fields'
+            });
             return;
         }
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if(!emailRegex.test(formData.email)){
-            setStatus({type:'error', message:'Please enter a valid email'});
+        if (!emailRegex.test(email)) {
+            setStatus({
+                type: 'error',
+                message: 'Please enter a valid email address'
+            });
             return;
         }
-        setStatus({type:'success', message:'Message sent succssfully! I\'ll get back to you soon.'});
-        setFormData({name:'',email:'',message:''});
-        setTimeout(()=> setStatus({type:'', message:''}), 5000)
+        setLoading(true);//Start Loading
+        //Send email
+        emailjs.send(
+            "service_la5xonp",
+            "template_3kdzdob",
+            { name, email, message },
+            "1A6n6emcswBrd7R92"
+        )
+            .then(() => {
+                //  → Auto Reply To User
+                emailjs.send(
+                    "service_la5xonp",
+                    "template_svkugor", //  auto reply template id
+                    {
+                        name: name,
+                        email: email
+                    },
+                    "1A6n6emcswBrd7R92"
+                );
+
+                setStatus({
+                    type: 'success',
+                    message: 'Message sent successfully!'
+                });
+
+                setFormData({ name: '', email: '', message: '' });
+                setLoading(false);//Stop Loading
+                //Remove Message After 5 Seconds
+                setTimeout(() => {
+                    setStatus({ type: '', message: '' });
+                }, 5000);
+            })
+            .catch(() => {
+                setLoading(false);//Stop Loading
+                setStatus({
+                    type: 'error',
+                    message: 'Something went wrong. Try again.'
+                });
+            });
     };
     const socialIcons = {
         github: Github,
-        linkedin:Linkedin,
-        twitter:Twitter
+        linkedin: Linkedin,
+        twitter: Twitter
     };
     return (
         <section id="contact" className="relative py-20 bg-black overflow-hidden">
@@ -46,7 +99,7 @@ function Contact() {
                 <FadeIn delay={0}>
                     <div className="text-center mb-16">
                         <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/30 rounded-full mb-6">
-                            <MessageSquare className='w-4 h-4 text-primary'/>
+                            <MessageSquare className='w-4 h-4 text-primary' />
                             <span className="text-sm text-primary font-medium tracking-wider uppercase">Get In Touch</span>
                         </div>
                         <h2 className="text-4xl lg:text-5xl font-normal text-white mb-4">
@@ -61,7 +114,7 @@ function Contact() {
                 <div className="grid md:grid-cols-2 gap-12">
                     <FadeIn delay={100}>
                         <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-                            <form onSubmit={handleSubmit} className='space-y-6'>
+                            <form onSubmit={handleSubmit} className='space-y-6' noValidate>
                                 <div>
                                     <label htmlFor="name" className='block text-sm font-medium text-white/80 mb-2'>Name</label>
                                     <input type="text" id="name" name='name' value={formData.name} onChange={handleChange} className='w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300' placeholder='Your Name' />
@@ -76,13 +129,64 @@ function Contact() {
                                     <label htmlFor="message" className='block text-sm font-medium text-white/80 mb-2'>Message</label>
                                     <textarea name="message" id="message" value={formData.message} onChange={handleChange} rows={5} placeholder='Tell me about your project' className='w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300 resize-none'></textarea>
                                 </div>
-                                <button type='submit' className='w-full px-6 py-3 bg-linear-to-r from-primary/10 to-primary text-white font-medium rounded-xl hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 flex items justify-center gap-2 group'>
+                                {/* <button type='submit' className='w-full px-6 py-3 bg-linear-to-r from-primary/10 to-primary text-white font-medium rounded-xl hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 flex items justify-center gap-2 group'>
                                     <span>Send Message</span>
-                                    <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"/>
+                                    <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                                </button> */}
+                                {/* Submit Button */}
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className={`
+        w-full px-6 py-3
+        bg-linear-to-r from-primary/10 to-primary
+        text-white font-medium rounded-xl
+        transition-all duration-300
+        flex items-center justify-center gap-3
+        hover:shadow-2xl hover:shadow-primary/30
+        group
+        ${loading
+                                            ? "opacity-80 cursor-not-allowed"
+                                            : "hover:scale-[1.02]"
+                                        }
+    `}
+                                >
+
+                                    {
+                                        loading ? (
+                                            <>
+                                                {/* Loader */}
+                                                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+
+                                                <span>Sending...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span>Send Message</span>
+
+                                                {/* Arrow Icon */}
+                                                <span className="group-hover:translate-x-1 transition-transform duration-300">
+                                                    →
+                                                </span>
+                                            </>
+                                        )
+                                    }
+
                                 </button>
+                                {/* <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className={`w-full px-6 py-3 bg-linear-to-r from-primary/10 to-primary text-white font-medium rounded-xl hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 flex items justify-center gap-2 group
+                                        ${loading? "bg-green-400 cursor-not-allowed": "bg-green-600 hover:bg-green-700"}`}>
+                                    {
+                                        loading
+                                            ? "Sending..."
+                                            : "Send Message"
+                                    }
+                                </button> */}
 
                                 {status.message && (
-                                    <div className={`p-4 rounded-xl ${status.type === 'success' ? 'bg-green-500/10 border border-green-500/20 text-green-400':'bg-red-500/10 border border-red-500/20 text-red-400'}`}>
+                                    <div className={`p-4 rounded-xl ${status.type === 'success' ? 'bg-green-500/10 border border-green-500/20 text-green-400' : 'bg-red-500/10 border border-red-500/20 text-red-400'}`}>
                                         {status.message}
                                     </div>
                                 )}
@@ -104,7 +208,7 @@ function Contact() {
                                 <div className="group relative bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-primary/30 transition-all duration-300">
                                     <div className="flex flex-start gap-4">
                                         <div className="p-3 bg-linear-to-br font-primary/20 to-primary/20 border border-primary/30 rounded-xl">
-                                            <Mail className="w-6 h-6 text-primary"/>
+                                            <Mail className="w-6 h-6 text-primary" />
                                         </div>
                                         <div className="flex-1">
                                             <p className="text-sm text-white/60 mb-1">Email</p>
@@ -118,7 +222,7 @@ function Contact() {
                                 <div className="group relative bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-primary/30 transition-all duration-300">
                                     <div className="flex flex-start gap-4">
                                         <div className="p-3 bg-linear-to-br font-primary/20 to-primary/20 border border-primary/30 rounded-xl">
-                                            <MapPin className='w-6 h-6 text-primary'/>
+                                            <MapPin className='w-6 h-6 text-primary' />
                                         </div>
                                         <div className="flex-1">
                                             <p className="text-sm text-white/60 mb-1">Location</p>
@@ -130,11 +234,11 @@ function Contact() {
                             <div>
                                 <p className="text-sm text-white/60 mb-4">Connect with me</p>
                                 <div className="flex gap-4">
-                                    {Object.entries(SOCIAL_LINKS).slice(0,3).map(([platform,url]) => {    
+                                    {Object.entries(SOCIAL_LINKS).slice(0, 3).map(([platform, url]) => {
                                         const Icon = socialIcons[platform];
                                         return Icon ? (
                                             <a key={platform} href={url} target='_blank' rel='noopener noreferrer' className='p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 hover:border-primary/50 hover:scale-110 transition-all duration-300 group'>
-                                                <Icon className="w-6 h-6 text-white/60 group-hover:text-primary transition-colors"/>
+                                                <Icon className="w-6 h-6 text-white/60 group-hover:text-primary transition-colors" />
                                             </a>
                                         ) : null;
                                     })}
